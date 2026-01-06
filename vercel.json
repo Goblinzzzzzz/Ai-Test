@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "buildCommand": "npm --prefix ai-assessment-app install && npm --prefix ai-assessment-app run build",
+  "outputDirectory": "ai-assessment-app/dist",
+  "rewrites": [
+    { "source": "/stats", "destination": "/stats.html" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
