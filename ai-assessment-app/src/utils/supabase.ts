@@ -33,7 +33,7 @@ export interface SupabaseSelectBuilder {
  * @deprecated Use Railway backend API instead
  * Creates a mock Supabase client that proxies to Railway backend
  */
-export function createClient(supabaseUrl: string, supabaseKey: string): SupabaseClient {
+export function createClient(_supabaseUrl: string, _supabaseKey: string): SupabaseClient {
   console.warn(
     '[DEPRECATED] Supabase client is deprecated. Please migrate to Railway backend API (api.ts)'
   );
@@ -71,10 +71,12 @@ export function createClient(supabaseUrl: string, supabaseKey: string): Supabase
           },
         }),
 
-        select: (columns?: string) => {
+        select: (_columns?: string) => {
           let cohort = 'default';
           let limit = 50;
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           let orderColumn = 'created_at';
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
           let ascending = false;
 
           const builder: SupabaseSelectBuilder = {
@@ -121,6 +123,19 @@ export function createClient(supabaseUrl: string, supabaseKey: string): Supabase
                 );
 
                 const result = await response.json();
+
+                if (!response.ok) {
+                  resolve({ data: null, error: result.error });
+                  return { data: null, error: result.error };
+                }
+
+                resolve({ data: result.data, error: null });
+                return { data: result.data, error: null };
+              } catch (error) {
+                resolve({ data: null, error });
+                return { data: null, error };
+              }
+            },
 
                 if (!response.ok) {
                   return resolve({ data: null, error: result.error });

@@ -81,17 +81,17 @@ const Statistics: React.FC = () => {
       // Fallback: compute statistics from distribution if view has no row
       if (!stats && dist && dist.length) {
         const count = dist.length;
-        const totals = dist.map(x => x.total);
+        const totals = dist.map((x: any) => x.total);
         const avg = (arr: number[]) => arr.reduce((s, v) => s + v, 0) / arr.length;
         const computed: StatisticsData = {
           cohort: selectedCohort,
           total_count: count,
           avg_total: Number(avg(totals).toFixed(2)),
-          avg_d1: Number(avg(dist.map(x => x.d1)).toFixed(2)),
-          avg_d2: Number(avg(dist.map(x => x.d2)).toFixed(2)),
-          avg_d3: Number(avg(dist.map(x => x.d3)).toFixed(2)),
-          avg_d4: Number(avg(dist.map(x => x.d4)).toFixed(2)),
-          avg_d5: Number(avg(dist.map(x => x.d5)).toFixed(2)),
+          avg_d1: Number(avg(dist.map((x: any) => x.d1)).toFixed(2)),
+          avg_d2: Number(avg(dist.map((x: any) => x.d2)).toFixed(2)),
+          avg_d3: Number(avg(dist.map((x: any) => x.d3)).toFixed(2)),
+          avg_d4: Number(avg(dist.map((x: any) => x.d4)).toFixed(2)),
+          avg_d5: Number(avg(dist.map((x: any) => x.d5)).toFixed(2)),
           min_total: Math.min(...totals),
           max_total: Math.max(...totals)
         };
