@@ -124,7 +124,23 @@ export async function getCohortStatistics(req: Request, res: Response): Promise<
     const result = await pool.query(query, [cohort]);
     
     // Handle empty results (Requirement 3.3)
-    const data = result.rows.length > 0 ? result.rows[0] : null;
+    let data = result.rows.length > 0 ? result.rows[0] : null;
+    
+    // Convert string numbers to actual numbers for proper JSON serialization
+    if (data) {
+      data = {
+        cohort: data.cohort,
+        total_count: parseInt(data.total_count),
+        avg_total: parseFloat(data.avg_total),
+        avg_d1: parseFloat(data.avg_d1),
+        avg_d2: parseFloat(data.avg_d2),
+        avg_d3: parseFloat(data.avg_d3),
+        avg_d4: parseFloat(data.avg_d4),
+        avg_d5: parseFloat(data.avg_d5),
+        min_total: parseInt(data.min_total),
+        max_total: parseInt(data.max_total),
+      };
+    }
     
     // Return success response (Requirement 3.1, 3.2)
     res.status(200).json({
