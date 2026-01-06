@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build:frontend": "tsc -b && vite build",
-    "build:backend": "cd server && npm run build",
+    "build:backend": "cd server && npm ci && npm run build",
     "build": "npm run build:backend && npm run build:frontend",
     "start": "cd server && npm start",
     "lint": "eslint .",
