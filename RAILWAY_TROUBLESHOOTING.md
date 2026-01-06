@@ -1,5 +1,30 @@
 # Railway 部署故障排查
 
+## 🎉 最新更新 (2026-01-06 16:52)
+
+### ✅ TypeScript 编译错误已修复
+
+**问题:** 前端构建失败，错误：
+```
+error TS6133: 'orderColumn' is declared but its value is never read.
+error TS6133: 'ascending' is declared but its value is never read.
+```
+
+**原因:** TypeScript 严格模式将未使用的变量视为错误
+
+**解决:** 删除了 `supabase.ts` 中未使用的变量
+
+**提交:** `55be0d9` - "Remove unused variables in supabase.ts to fix TypeScript build errors"
+
+**状态:** ✅ 已推送到 GitHub，Railway 正在自动部署
+
+**预期结果:** 
+- ✅ Backend build completed
+- ✅ Frontend build completed  
+- ✅ Deployment live
+
+---
+
 ## 当前问题
 
 部署卡在 "scheduling build" 阶段，没有实际开始构建。
