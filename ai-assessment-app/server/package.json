@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js",
+    "migrate": "node run-migration.js",
+    "start": "node run-migration.js && node dist/index.js",
+    "start:no-migrate": "node dist/index.js",
     "test": "echo \"Error: no test command yet\" && exit 1"
   },
   "keywords": ["express", "typescript", "postgresql"],
