@@ -74,10 +74,6 @@ export function createClient(_supabaseUrl: string, _supabaseKey: string): Supaba
         select: (_columns?: string) => {
           let cohort = 'default';
           let limit = 50;
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          let orderColumn = 'created_at';
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          let ascending = false;
 
           const builder: SupabaseSelectBuilder = {
             eq: (column: string, value: any) => {
@@ -87,9 +83,8 @@ export function createClient(_supabaseUrl: string, _supabaseKey: string): Supaba
               return builder;
             },
 
-            order: (column: string, options?: { ascending: boolean }) => {
-              orderColumn = column;
-              ascending = options?.ascending || false;
+            order: (_column: string, _options?: { ascending: boolean }) => {
+              // Order is handled by the backend API
               return builder;
             },
 
