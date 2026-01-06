@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .result {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>API 连接测试</h1>
+    
+    <div>
+        <button onclick="testStats()">测试统计 API</button>
+        <button onclick="testRecent()">测试最近记录 API</button>
+        <button onclick="testDistribution()">测试分布 API</button>
+    </div>
+    
+    <div id="results"></div>
+
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        function addResult(title, success, data) {
+            const div = document.createElement('div');
+            div.className = `result ${success ? 'success' : 'error'}`;
+            div.innerHTML = `
+                <h3>${title}</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+            resultsDiv.appendChild(div);
+        }
+        
+        async function testStats() {
+            resultsDiv.innerHTML = '';
+            try {
+                const response = await fetch('/api/assessments/stats/default');
+                const data = await response.json();
+                addResult('统计 API 测试', response.ok, data);
+            } catch (error) {
+                addResult('统计 API 测试', false, { error: error.message });
+            }
+        }
+        
+        async function testRecent() {
+            resultsDiv.innerHTML = '';
+            try {
+                const response = await fetch('/api/assessments/recent/default?limit=10');
+                const data = await response.json();
+                addResult('最近记录 API 测试', response.ok, data);
+            } catch (error) {
+                addResult('最近记录 API 测试', false, { error: error.message });
+            }
+        }
+        
+        async function testDistribution() {
+            resultsDiv.innerHTML = '';
+            try {
+                const response = await fetch('/api/assessments/distribution/default');
+                const data = await response.json();
+                addResult('分布 API 测试', response.ok, data);
+            } catch (error) {
+                addResult('分布 API 测试', false, { error: error.message });
+            }
+        }
+        
+        // Auto-run on load
+        window.onload = () => {
+            testStats();
+        };
+    </script>
+</body>
+</html>
