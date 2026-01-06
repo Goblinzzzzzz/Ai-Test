@@ -136,16 +136,6 @@ export function createClient(_supabaseUrl: string, _supabaseKey: string): Supaba
                 return { data: null, error };
               }
             },
-
-                if (!response.ok) {
-                  return resolve({ data: null, error: result.error });
-                }
-
-                return resolve({ data: result.data, error: null });
-              } catch (error) {
-                return resolve({ data: null, error });
-              }
-            },
           };
 
           return builder;
