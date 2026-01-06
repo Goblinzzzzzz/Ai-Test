@@ -13,10 +13,11 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { BarChart3, Users, TrendingUp, Download, RefreshCw } from 'lucide-react';
 import { getCohortStatistics, getRecentAssessments, getAssessmentDistribution } from '../utils/api';
 
-// Register Chart.js components
+// Register Chart.js components and plugins
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -26,7 +27,8 @@ ChartJS.register(
   ArcElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ChartDataLabels
 );
 
 interface StatisticsData {
@@ -184,6 +186,17 @@ const Statistics: React.FC = () => {
       legend: {
         position: 'top' as const,
       },
+      datalabels: {
+        display: true,
+        color: '#4B5563',
+        font: {
+          weight: 'bold' as const,
+          size: 14,
+        },
+        formatter: (value: number) => value.toFixed(1),
+        anchor: 'end' as const,
+        align: 'top' as const,
+      },
     },
     scales: {
       y: {
@@ -199,6 +212,19 @@ const Statistics: React.FC = () => {
     plugins: {
       legend: {
         position: 'bottom' as const,
+      },
+      datalabels: {
+        display: true,
+        color: '#FFFFFF',
+        font: {
+          weight: 'bold' as const,
+          size: 16,
+        },
+        formatter: (value: number, context: any) => {
+          const total = context.chart.data.datasets[0].data.reduce((a: number, b: number) => a + b, 0);
+          const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : '0.0';
+          return value > 0 ? `${value}\n(${percentage}%)` : '';
+        },
       },
     }
   };
