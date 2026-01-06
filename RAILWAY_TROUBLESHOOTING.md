@@ -1,5 +1,29 @@
 # Railway 部署故障排查
 
+## 🎉 最新更新 (2026-01-06 17:03)
+
+### ✅ 启动命令冲突已修复
+
+**问题:** 容器启动失败，错误：
+```
+/bin/bash: line 1: cd: ai-assessment-app: No such file or directory
+```
+
+**原因:** 根目录的 `railway.json` 包含错误的启动命令 `cd ai-assessment-app && npm start`，与 Railway Dashboard 中设置的 Root Directory 冲突
+
+**解决:** 删除了根目录的 `railway.json` 和 `nixpacks.toml`，只保留 `ai-assessment-app/railway.json`
+
+**提交:** `8a1df8c` - "Remove conflicting root railway.json and nixpacks.toml files"
+
+**状态:** ✅ 已推送到 GitHub，Railway 正在自动部署
+
+**预期结果:** 
+- ✅ Build completed
+- ✅ Container started successfully
+- ✅ Server listening on port 3000
+
+---
+
 ## 🎉 最新更新 (2026-01-06 16:52)
 
 ### ✅ TypeScript 编译错误已修复
