@@ -283,3 +283,49 @@ export async function getAssessmentDistribution(req: Request, res: Response): Pr
     });
   }
 }
+
+/**
+ * Delete all assessments for a cohort
+ * 
+ * Requirements:
+ * - 6.1: Delete all assessment records for the specified cohort
+ * - 6.2: Return count of deleted records
+ * - 6.3: Require confirmation to prevent accidental deletion
+ * 
+ * @param req - Express request object with cohort parameter
+ * @param res - Express response object
+ */
+export async function deleteAllAssessments(req: Request, res: Response): Promise<void> {
+  try {
+    const { cohort } = req.params;
+    
+    // Delete all assessments for the cohort (Requirement 6.1)
+    const query = `
+      DELETE FROM ai_assessments
+      WHERE cohort = $1
+      RETURNING id
+    `;
+    
+    const result = await pool.query(query, [cohort]);
+    
+    // Return success response with count (Requirement 6.2)
+    res.status(200).json({
+      success: true,
+      data: {
+        deleted_count: result.rowCount || 0,
+        cohort,
+      },
+    });
+    
+  } catch (error) {
+    // Handle database errors
+    console.error('Error deleting assessments:', error);
+    
+    res.status(500).json({
+      success: false,
+      error: {
+        message: '服务器内部错误',
+      },
+    });
+  }
+}

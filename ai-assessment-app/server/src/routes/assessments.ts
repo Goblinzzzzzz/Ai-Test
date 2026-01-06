@@ -4,6 +4,7 @@ import {
   getCohortStatistics,
   getRecentAssessments,
   getAssessmentDistribution,
+  deleteAllAssessments,
 } from '../controllers/assessmentController.js';
 import { assessmentSubmissionLimiter } from '../middleware/rateLimiter.js';
 import { sanitizeInput } from '../middleware/validator.js';
@@ -16,12 +17,14 @@ import { sanitizeInput } from '../middleware/validator.js';
  * - GET /api/assessments/stats/:cohort - Get cohort statistics
  * - GET /api/assessments/recent/:cohort - Get recent assessments
  * - GET /api/assessments/distribution/:cohort - Get assessment distribution
+ * - DELETE /api/assessments/:cohort - Delete all assessments for a cohort
  * 
  * Requirements:
  * - 2.1: Assessment submission endpoint
  * - 3.1: Statistics retrieval endpoint
  * - 4.1: Recent assessments endpoint
  * - 5.1: Distribution data endpoint
+ * - 6.1: Delete all assessments endpoint
  */
 
 const router = Router();
@@ -89,6 +92,21 @@ router.get(
   '/assessments/distribution/:cohort',
   sanitizeInput,
   getAssessmentDistribution
+);
+
+/**
+ * DELETE /api/assessments/:cohort
+ * Delete all assessments for a cohort
+ * 
+ * Middleware:
+ * - sanitizeInput: Input sanitization for cohort parameter
+ * 
+ * Validates: Requirement 6.1
+ */
+router.delete(
+  '/assessments/:cohort',
+  sanitizeInput,
+  deleteAllAssessments
 );
 
 export default router;

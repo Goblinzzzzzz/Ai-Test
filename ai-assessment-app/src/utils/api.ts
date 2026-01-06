@@ -260,3 +260,28 @@ export async function getAssessmentDistribution(cohort: string = 'default') {
     throw error;
   }
 }
+
+/**
+ * Delete all assessments for a cohort
+ * 需求: 6.1
+ */
+export async function deleteAllAssessments(cohort: string = 'default') {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/assessments/${cohort}`,
+      {
+        method: 'DELETE',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete assessments: ${response.statusText}`);
+    }
+
+    const result: ApiResponse<{ deleted_count: number; cohort: string }> = await response.json();
+    return result.data;
+  } catch (error) {
+    console.error('Failed to delete assessments:', error);
+    throw error;
+  }
+}

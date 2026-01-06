@@ -14,8 +14,8 @@ import {
   Legend,
 } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { BarChart3, Users, TrendingUp, Download, RefreshCw } from 'lucide-react';
-import { getCohortStatistics, getRecentAssessments, getAssessmentDistribution } from '../utils/api';
+import { BarChart3, Users, TrendingUp, Download, RefreshCw, Trash2 } from 'lucide-react';
+import { getCohortStatistics, getRecentAssessments, getAssessmentDistribution, deleteAllAssessments } from '../utils/api';
 
 // Register Chart.js components and plugins
 ChartJS.register(
@@ -64,6 +64,8 @@ const Statistics: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedCohort] = useState('default');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     loadStatistics();
@@ -257,6 +259,25 @@ const Statistics: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  const handleDeleteAll = async () => {
+    setIsDeleting(true);
+    try {
+      const result = await deleteAllAssessments(selectedCohort);
+      console.log(`成功删除 ${result?.deleted_count || 0} 条记录`);
+      
+      // 关闭确认对话框
+      setShowDeleteConfirm(false);
+      
+      // 重新加载数据
+      await loadStatistics();
+    } catch (err) {
+      console.error('删除数据失败:', err);
+      setError('删除数据失败，请稍后重试');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-indigo-50 flex items-center justify-center">
@@ -302,8 +323,19 @@ const Statistics: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">群体数据统计</h1>
-          <p className="text-gray-600">班级: {selectedCohort} | 样本数: {statistics.total_count}</p>
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">群体数据统计</h1>
+              <p className="text-gray-600">班级: {selectedCohort} | 样本数: {statistics.total_count}</p>
+            </div>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              清空数据
+            </button>
+          </div>
         </div>
 
         {/* Summary Cards */}
@@ -447,6 +479,49 @@ const Statistics: React.FC = () => {
             </table>
           </div>
         </div>
+
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full mx-4">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Trash2 className="w-8 h-8 text-red-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">确认清空数据</h3>
+                <p className="text-gray-600 mb-6">
+                  此操作将删除班级 <span className="font-semibold text-gray-900">"{selectedCohort}"</span> 的所有测评数据（共 {statistics.total_count} 条记录）。
+                </p>
+                <p className="text-red-600 font-semibold mb-6">
+                  ⚠️ 此操作不可恢复！
+                </p>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    disabled={isDeleting}
+                    className="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors disabled:opacity-50"
+                  >
+                    取消
+                  </button>
+                  <button
+                    onClick={handleDeleteAll}
+                    disabled={isDeleting}
+                    className="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center"
+                  >
+                    {isDeleting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                        删除中...
+                      </>
+                    ) : (
+                      '确认删除'
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
